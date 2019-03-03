@@ -6,14 +6,30 @@ import { isNullOrUndefined } from 'util';
 // TODO might want to rename this in the future to something more general
 
 // TODO this is a terrible idea. should put API key somwhere else
-const API_KEY = 'RGAPI-ee1825b5-50e7-4c2c-aa27-3208c10ccff2';
+const API_KEY = 'RGAPI-c823e107-e4c1-4e63-be3d-45044eb2d3d5';
 
 // TODO remove this
 const TEST_SUMMONER = 'flyinXhobo';
 
+
+const CHAMPIONS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/8.14.1/data/en_US/champion.json';
+
 export class MatchStatisticService {
+  private championMap: Map<string|number, string>;
+  // TODO should fix this
+  async loadChampions() {
+    if (!this.championMap) {
+      const championJson = await this.getChampionJSON();
+      this.championMap = new Map<string|number, string>();
+      for (const champName of Object.keys(championJson.data)) {
+        const key: string = championJson.data[champName]['key'];
+        this.championMap.set(key, champName);
+      }
+    }
+  }
   // TODO refactor and clean this up
   async getMatchStatisticsForSummoner(summonerName: string, begin?: number, end?: number): Promise<SummonerMatchStatistic[]>  {
+    await this.loadChampions();
     const summonerMatchStats : SummonerMatchStatistic[] = [];
     let  responseJson = await this.getSummonerNameInfo(summonerName);
 
@@ -42,8 +58,8 @@ export class MatchStatisticService {
           const participants = responseJson['participants'] as any[];
           for (const participant of participants) {
             if (participant.participantId === participantId) {
-
-              summonerMatchStat.champId = participant.championId;
+              // cast to string because api store it as an int
+              summonerMatchStat.champName = this.championMap.get('' +participant.championId);
 
               summonerMatchStat.summonerSpellIds = {
                 firstSummonerSpellId: participant.spell1Id,
@@ -120,5 +136,10 @@ export class MatchStatisticService {
     let response =
       await fetch(`https://na1.api.riotgames.com/lol/match/v4/matches/${matchId}?api_key=${API_KEY}`);
       return response.json();
+  }
+
+  private async getChampionJSON() {
+    let response = await fetch(CHAMPIONS_DATA_URL);
+    return response.json();
   }
 }

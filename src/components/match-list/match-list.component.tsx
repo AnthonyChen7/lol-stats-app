@@ -22,7 +22,7 @@ export class MatchListComponent extends React.Component<MatchListProps, {}> {
           <Grid padded>
             {this.props.matches.matchStats.map( (matchStat) => (
               <Grid.Row color={'red'} key={matchStat.id}>
-                <Grid.Column>{matchStat.id}</Grid.Column>
+                <Grid.Column>{matchStat.champName}</Grid.Column>
               </Grid.Row>
             ))}
           </Grid>

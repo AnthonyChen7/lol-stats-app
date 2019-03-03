@@ -25,6 +25,10 @@ class App extends React.Component<{}, AppState> {
     this.matchStatsService = new MatchStatisticService();
   }
 
+  componentDidMount() {
+    this.matchStatsService.loadChampions();
+  }
+
   onSearchClicked(searchVal: string): void {
     // TODO do it like this for now
     this.matchStatsService.getMatchStatisticsForSummoner(searchVal, 0 ,25)

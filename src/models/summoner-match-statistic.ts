@@ -2,7 +2,7 @@ export class SummonerMatchStatistic {
   // TODO write fxn to getthat thing where you need to calculate
   // gameDuration is in seconds
   // TODO might want to remove summonerName in future... ?
-  constructor(public summonerName?: string, public gameDurationInSeconds?: number, public champId?: string, public summonerSpellIds?: SummonerSpellInfo, public isWin?: boolean, public numKills?: number, public numDeaths?: number, public numAssists?: number,
+  constructor(public summonerName?: string, public gameDurationInSeconds?: number, public champName?: string, public summonerSpellIds?: SummonerSpellInfo, public isWin?: boolean, public numKills?: number, public numDeaths?: number, public numAssists?: number,
     public neutralMinionsKilled?: number, public neutralMinionsKilledTeamJungle?: number, public champLvl?: number,
     public items?: number[], public totalMinionsKilled?: number, public neutralMinionsKilledEnemyJungle?: number,
     public perks?: number[], public id?: string | number) {
