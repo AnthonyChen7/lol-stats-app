@@ -5,6 +5,7 @@ import {SearchBarComponent} from './components/search-bar/search-bar.component';
 import {MatchListComponent} from './components/match-list/match-list.component';
 import { MatchStatisticService } from './services/match-statistic.service';
 import { SummonerMatchStatistic } from './models/summoner-match-statistic';
+import { SummonerMatches } from './models/summoner-matches';
 
 // TODO fix his
 // const SEARCH_BAR_REGEX = '^[0-9]+$';
@@ -14,7 +15,7 @@ const SEARCH_BAR_REGEX = undefined;
 // const SEARCH_BAR_ERROR_MSG = 'Value be must be a number';
 const SEARCH_BAR_ERROR_MSG = undefined;
 interface AppState {
-  searchResults: SummonerMatchStatistic[];
+  searchResult?: SummonerMatches | undefined;
 }
 class App extends React.Component<{}, AppState> {
   private matchStatsService: MatchStatisticService;
@@ -22,9 +23,6 @@ class App extends React.Component<{}, AppState> {
   constructor() {
     super({});
     this.matchStatsService = new MatchStatisticService();
-    this.state = {
-      searchResults: [],
-    };
   }
 
   onSearchClicked(searchVal: string): void {
@@ -32,7 +30,7 @@ class App extends React.Component<{}, AppState> {
     this.matchStatsService.getMatchStatisticsForSummoner(searchVal, 0 ,25)
     .then((result: SummonerMatchStatistic[]) => {
       // this.searchResults = result;
-      this.setState({searchResults: result});
+      this.setState({searchResult: new SummonerMatches(searchVal, result)});
     })
     .catch();
   }
@@ -44,10 +42,11 @@ class App extends React.Component<{}, AppState> {
           regularExp = {SEARCH_BAR_REGEX}
           errorMsg = {SEARCH_BAR_ERROR_MSG} 
           searchClicked = { (searchVal: string) => this.onSearchClicked(searchVal) } />
+        {this.state && this.state.searchResult && 
         <MatchListComponent
-        //  matches = {this.searchResults}
-          matches = {this.state.searchResults}
+          matches = {this.state.searchResult}
          />
+         }
       </div>
       
     );

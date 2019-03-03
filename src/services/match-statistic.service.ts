@@ -23,13 +23,13 @@ export class MatchStatisticService {
 
     responseJson = await this.getMatchListsByAccountId(accountId,begin ,end);
 
-    const matches = (responseJson['matches'] as any[]).map(element => element['gameId']);
+    const matchIds = (responseJson['matches'] as any[]).map(element => element['gameId']);
 
-    if (matches) {
-      for (let i = 0 ; i < matches.length; i++) {
-        responseJson = await this.getMatchInfoByMatchId(matches[i]);
+    if (matchIds) {
+      for (let i = 0 ; i < matchIds.length; i++) {
+        responseJson = await this.getMatchInfoByMatchId(matchIds[i]);
         const summonerMatchStat = new SummonerMatchStatistic();
-
+        summonerMatchStat.id = matchIds[i];
         summonerMatchStat.summonerName = summonerNameResponse;
         summonerMatchStat.gameDurationInSeconds = responseJson['gameDuration'];
 
