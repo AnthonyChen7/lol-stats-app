@@ -13,23 +13,35 @@ const TEST_SUMMONER = 'flyinXhobo';
 
 
 const CHAMPIONS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/8.14.1/data/en_US/champion.json';
+const ITEMS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/item.json';
 
 export class MatchStatisticService {
-  private championMap: Map<string|number, string>;
+  private championMap: Map<string, string>;
+  private itemsMap: Map<string, string>;
   // TODO should fix this
   async loadChampions() {
     if (!this.championMap) {
       const championJson = await this.getChampionJSON();
-      this.championMap = new Map<string|number, string>();
+      this.championMap = new Map<string, string>();
       for (const champName of Object.keys(championJson.data)) {
         const key: string = championJson.data[champName]['key'];
         this.championMap.set(key, champName);
       }
     }
   }
+
+  async loadItems() {
+    if (!this.itemsMap) {
+      const itemsJson = await this.getItemsJSON();
+      this.itemsMap = new Map<string, string>();
+      for (const itemId of Object.keys(itemsJson.data)) {
+        const value: string = itemsJson.data[itemId]['name'];
+        this.itemsMap.set(itemId, value);
+      }
+    }
+  }
   // TODO refactor and clean this up
   async getMatchStatisticsForSummoner(summonerName: string, begin?: number, end?: number): Promise<SummonerMatchStatistic[]>  {
-    await this.loadChampions();
     const summonerMatchStats : SummonerMatchStatistic[] = [];
     let  responseJson = await this.getSummonerNameInfo(summonerName);
 
@@ -84,13 +96,13 @@ export class MatchStatisticService {
                 summonerMatchStat.champLvl = stats.champLevel;
 
                 summonerMatchStat.items = [
-                  stats.item0,
-                  stats.item1,
-                  stats.item2,
-                  stats.item3,
-                  stats.item4,
-                  stats.item5,
-                  stats.item6,
+                  this.itemsMap.get(''+stats.item0),
+                  this.itemsMap.get(''+stats.item1),
+                  this.itemsMap.get(''+stats.item2),
+                  this.itemsMap.get(''+stats.item3),
+                  this.itemsMap.get(''+stats.item4),
+                  this.itemsMap.get(''+stats.item5),
+                  this.itemsMap.get(''+stats.item6),
                 ];
 
                 summonerMatchStat.perks = [
@@ -140,6 +152,11 @@ export class MatchStatisticService {
 
   private async getChampionJSON() {
     let response = await fetch(CHAMPIONS_DATA_URL);
+    return response.json();
+  }
+
+  private async getItemsJSON() {
+    let response = await fetch(ITEMS_DATA_URL);
     return response.json();
   }
 }

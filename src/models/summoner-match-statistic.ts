@@ -4,7 +4,7 @@ export class SummonerMatchStatistic {
   // TODO might want to remove summonerName in future... ?
   constructor(public summonerName?: string, public gameDurationInSeconds?: number, public champName?: string, public summonerSpellIds?: SummonerSpellInfo, public isWin?: boolean, public numKills?: number, public numDeaths?: number, public numAssists?: number,
     public neutralMinionsKilled?: number, public neutralMinionsKilledTeamJungle?: number, public champLvl?: number,
-    public items?: number[], public totalMinionsKilled?: number, public neutralMinionsKilledEnemyJungle?: number,
+    public items?: (string| undefined)[], public totalMinionsKilled?: number, public neutralMinionsKilledEnemyJungle?: number,
     public perks?: number[], public id?: string | number) {
 
   }
