@@ -26,8 +26,7 @@ class App extends React.Component<{}, AppState> {
   }
 
   componentDidMount() {
-    this.matchStatsService.loadChampions();
-    this.matchStatsService.loadItems();
+    this.matchStatsService.loadStaticData();
   }
 
   onSearchClicked(searchVal: string): void {

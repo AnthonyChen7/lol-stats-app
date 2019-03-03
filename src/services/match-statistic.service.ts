@@ -14,10 +14,18 @@ const TEST_SUMMONER = 'flyinXhobo';
 
 const CHAMPIONS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/8.14.1/data/en_US/champion.json';
 const ITEMS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/item.json';
+const SUMMONER_SPELL_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/summoner.json';
 
 export class MatchStatisticService {
   private championMap: Map<string, string>;
   private itemsMap: Map<string, string>;
+  private summonerSpellsMap: Map<string, string>;
+
+  async loadStaticData() {
+    await this.loadChampions();
+    await this.loadItems();
+    await this.loadSummonerSpells();
+  }
   // TODO should fix this
   async loadChampions() {
     if (!this.championMap) {
@@ -26,6 +34,18 @@ export class MatchStatisticService {
       for (const champName of Object.keys(championJson.data)) {
         const key: string = championJson.data[champName]['key'];
         this.championMap.set(key, champName);
+      }
+    }
+  }
+
+  async loadSummonerSpells() {
+    if (!this.summonerSpellsMap) {
+      const summonerSpellsJson = await this.getSummonerSpellJSON();
+      this.summonerSpellsMap = new Map<string, string>();
+      for (const jsonKey of Object.keys(summonerSpellsJson.data)) {
+        const key: string = summonerSpellsJson.data[jsonKey]['key'];
+        const value: string = summonerSpellsJson.data[jsonKey]['name'];
+        this.summonerSpellsMap.set(key, value);
       }
     }
   }
@@ -73,9 +93,10 @@ export class MatchStatisticService {
               // cast to string because api store it as an int
               summonerMatchStat.champName = this.championMap.get('' +participant.championId);
 
-              summonerMatchStat.summonerSpellIds = {
-                firstSummonerSpellId: participant.spell1Id,
-                secondSummonerSpellId: participant.spell2Id
+              summonerMatchStat.summonerSpells = {
+                // cast to string because api store it as an int
+                firstSummonerSpell: this.summonerSpellsMap.get(''+participant.spell1Id),
+                secondSummonerSpell: this.summonerSpellsMap.get(''+participant.spell2Id)
               };
 
               const stats = participant.stats;
@@ -96,6 +117,7 @@ export class MatchStatisticService {
                 summonerMatchStat.champLvl = stats.champLevel;
 
                 summonerMatchStat.items = [
+                  // cast to string because api store it as an int
                   this.itemsMap.get(''+stats.item0),
                   this.itemsMap.get(''+stats.item1),
                   this.itemsMap.get(''+stats.item2),
@@ -157,6 +179,11 @@ export class MatchStatisticService {
 
   private async getItemsJSON() {
     let response = await fetch(ITEMS_DATA_URL);
+    return response.json();
+  }
+
+  private async getSummonerSpellJSON() {
+    let response = await fetch(SUMMONER_SPELL_DATA_URL);
     return response.json();
   }
 }
