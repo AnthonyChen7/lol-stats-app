@@ -15,16 +15,31 @@ const TEST_SUMMONER = 'flyinXhobo';
 const CHAMPIONS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/8.14.1/data/en_US/champion.json';
 const ITEMS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/item.json';
 const SUMMONER_SPELL_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/summoner.json';
+const RUNES_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/rune.json';
 
 export class MatchStatisticService {
   private championMap: Map<string, string>;
   private itemsMap: Map<string, string>;
   private summonerSpellsMap: Map<string, string>;
+  private runesMap: Map<string, string>;
 
   async loadStaticData() {
     await this.loadChampions();
     await this.loadItems();
     await this.loadSummonerSpells();
+    await this.loadRunes();
+  }
+
+  async loadRunes () {
+    if (!this.runesMap) {
+      const runesJson = await this.getRunesJSON();
+      this.runesMap = new Map<string, string>();
+      for (const runeId of Object.keys(runesJson.data)) {
+        const value = runesJson.data[runeId]['name'];
+        this.runesMap.set(runeId, value);
+      }
+      console.log(this.runesMap);
+    }
   }
   // TODO should fix this
   async loadChampions() {
@@ -99,6 +114,16 @@ export class MatchStatisticService {
                 secondSummonerSpell: this.summonerSpellsMap.get(''+participant.spell2Id)
               };
 
+              if(participant.runes) {
+                summonerMatchStat.runes = [];
+                // cast to string because api store it as an int
+                for( const runeInfo of participant.runes) {
+                  if (this.runesMap.has('' + runeInfo.runeId)) {
+                    summonerMatchStat.runes.push(this.runesMap.get('' + runeInfo.runeId));
+                  }
+                }
+              }
+
               const stats = participant.stats;
               if (stats) {
                 summonerMatchStat.isWin = stats.win;
@@ -125,15 +150,6 @@ export class MatchStatisticService {
                   this.itemsMap.get(''+stats.item4),
                   this.itemsMap.get(''+stats.item5),
                   this.itemsMap.get(''+stats.item6),
-                ];
-
-                summonerMatchStat.perks = [
-                  stats.perk0,
-                  stats.perk1,
-                  stats.perk2,
-                  stats.perk3,
-                  stats.perk4,
-                  stats.perk5
                 ];
                 summonerMatchStats.push(summonerMatchStat);
               }
@@ -184,6 +200,11 @@ export class MatchStatisticService {
 
   private async getSummonerSpellJSON() {
     let response = await fetch(SUMMONER_SPELL_DATA_URL);
+    return response.json();
+  }
+
+  private async getRunesJSON() {
+    let response = await fetch(RUNES_DATA_URL);
     return response.json();
   }
 }
