@@ -1,0 +1,27 @@
+{
+  "name": "lol-stats-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "kayn": "^0.9.8",
+    "kindred-api": "^2.0.83",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3",
+    "react-scripts-ts": "3.1.0",
+    "semantic-ui-react": "^0.85.0"
+  },
+  "scripts": {
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.8",
+    "@types/node": "^11.9.5",
+    "@types/react": "^16.8.5",
+    "@types/react-dom": "^16.8.2",
+    "typescript": "^3.3.3333",
+    "webpack-node-externals": "^1.7.2"
+  }
+}
