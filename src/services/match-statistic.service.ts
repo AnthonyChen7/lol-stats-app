@@ -13,18 +13,18 @@ const TEST_SUMMONER = 'flyinXhobo';
 
 export class MatchStatisticService {
   // TODO refactor and clean this up
-  async getMatchStatisticsForSummoner(summonerName: string) {
-
+  async getMatchStatisticsForSummoner(summonerName: string, begin?: number, end?: number): Promise<SummonerMatchStatistic[]>  {
+    const summonerMatchStats : SummonerMatchStatistic[] = [];
     let  responseJson = await this.getSummonerNameInfo(summonerName);
 
     const summonerNameResponse = responseJson['name'];
 
     const accountId = responseJson['accountId'];
-    // TODO do it like this for now
-    responseJson = await this.getMatchListsByAccountId(accountId,0 ,25);
+
+    responseJson = await this.getMatchListsByAccountId(accountId,begin ,end);
 
     const matches = (responseJson['matches'] as any[]).map(element => element['gameId']);
-    const summonerMatchStats : SummonerMatchStatistic[] = [];
+
     if (matches) {
       for (let i = 0 ; i < matches.length; i++) {
         responseJson = await this.getMatchInfoByMatchId(matches[i]);
