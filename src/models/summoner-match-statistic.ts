@@ -9,12 +9,15 @@ export class SummonerMatchStatistic {
 
   }
 
-  get gameDurationInMinutes() {
-    return this.gameDurationInSeconds === undefined ? 0 : this.gameDurationInSeconds / 60;
+  get gameDurationInMinutesAsString() {
+    return this.gameDurationInSeconds === undefined ? '0' : (this.gameDurationInSeconds / 60).toFixed(2);
   }
 
-  get creepScorePerMinute() {
-    return this.totalMinionsKilled === undefined ? 0 : this.totalMinionsKilled / this.gameDurationInMinutes;
+  get creepScorePerMinuteAsString() {
+    if (this.gameDurationInSeconds === undefined) {
+      return '0';
+    }
+    return this.totalMinionsKilled === undefined ? '0' : (this.totalMinionsKilled / (this.gameDurationInSeconds / 60)).toFixed(2);
   }
 
   get getWinLost() {
@@ -22,7 +25,7 @@ export class SummonerMatchStatistic {
       return WinLossEnum.WIN;
     }
     else if (this.isWin === false) {
-      return WinLossEnum.LOST
+      return WinLossEnum.LOSE
     }
     else {
       return undefined;
@@ -37,5 +40,5 @@ export interface SummonerSpellInfo {
 
 export enum WinLossEnum {
   WIN = 'Win',
-  LOST = 'Lost'
+  LOSE = 'Lose'
 }

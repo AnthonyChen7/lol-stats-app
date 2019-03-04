@@ -1,5 +1,5 @@
 import * as React from 'react';
-import './search-bar.component.scss';
+import './search-bar.component.css';
 import { Icon, Input } from 'semantic-ui-react'
 
 // TODO maybe make use of a form library instead
@@ -11,7 +11,6 @@ interface SearchBarState {
 }
 interface SearchBarProps {
   regularExp?: string;
-  errorMsg?: string;
   searchClicked: (searchBarVal: string) => void;
 }
 export class SearchBarComponent extends React.Component<SearchBarProps, SearchBarState> {
@@ -72,8 +71,9 @@ export class SearchBarComponent extends React.Component<SearchBarProps, SearchBa
         onChange={ (e: React.FormEvent<HTMLInputElement>) => this.handleChange(e)}
         onKeyUp = { (event : KeyboardEvent) => this.onKeyUp(event) }
         error = { !this.state.isDirty || this.state.isValid ? false : true}/>
-        {this.state.isDirty && !this.state.isValid && !this.props.errorMsg && <div>Value is invalid</div>}
-        {this.state.isDirty && !this.state.isValid && this.props.errorMsg && <div>{this.props.errorMsg}</div>}
+        <div className="error-message">
+          {this.state.isDirty && !this.state.isValid ? 'Value is invalid' : ''}
+        </div>
       </>
 
       

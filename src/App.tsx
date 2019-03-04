@@ -19,7 +19,6 @@ interface AppState {
 }
 class App extends React.Component<{}, AppState> {
   private matchStatsService: MatchStatisticService;
-  // private searchResults: SummonerMatchStatistic[];
   constructor() {
     super({});
     this.matchStatsService = new MatchStatisticService();
@@ -31,7 +30,7 @@ class App extends React.Component<{}, AppState> {
 
   onSearchClicked(searchVal: string): void {
     // TODO do it like this for now
-    this.matchStatsService.getMatchStatisticsForSummoner(searchVal, 0 ,25)
+    this.matchStatsService.getMatchStatisticsForSummoner(searchVal)
     .then((result: SummonerMatchStatistic[]) => {
       // this.searchResults = result;
       this.setState({searchResult: new SummonerMatches(searchVal, result)});
@@ -41,10 +40,9 @@ class App extends React.Component<{}, AppState> {
   public render() {
     return (
       // https://errors.wtf/left-side-of-comma-operator-is-unused-and-has-no-side-effects/
-      <div>
+      <div className="container">
         <SearchBarComponent
           regularExp = {SEARCH_BAR_REGEX}
-          errorMsg = {SEARCH_BAR_ERROR_MSG} 
           searchClicked = { (searchVal: string) => this.onSearchClicked(searchVal) } />
         {this.state && this.state.searchResult && 
         <MatchListComponent

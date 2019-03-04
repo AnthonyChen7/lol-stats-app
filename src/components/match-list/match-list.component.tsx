@@ -1,9 +1,8 @@
 import * as React from 'react';
-import './match-list.component.scss';
+import './match-list.component.css';
 import { Grid, Header, Table } from 'semantic-ui-react'
 import { SummonerMatches } from 'src/models/summoner-matches';
 import { WinLossEnum } from 'src/models/summoner-match-statistic';
-import { MatchStatisticService } from 'src/services/match-statistic.service';
 
 interface MatchListProps {
   matches: SummonerMatches | undefined;
@@ -18,7 +17,7 @@ export class MatchListComponent extends React.Component<MatchListProps, {}> {
     if (winLossEnum === WinLossEnum.WIN) {
       return 'green';
     }
-    else if (winLossEnum === WinLossEnum.LOST) {
+    else if (winLossEnum === WinLossEnum.LOSE) {
       return 'red';
     }
     return 'grey';
@@ -30,8 +29,8 @@ export class MatchListComponent extends React.Component<MatchListProps, {}> {
     if (this.props.matches && this.props.matches.matchStats && this.props.matches.matchStats.length > 0) {
       return ( 
         <>
-          <Header as='h1'>Match History for {this.props.matches.summonerName}</Header>
-          <Table>
+          <Header as='h1' textAlign='center'>Match History for {this.props.matches.summonerName}</Header>
+          <Table fixed basic>
           
           <Table.Header>
             <Table.Row>
@@ -61,17 +60,17 @@ export class MatchListComponent extends React.Component<MatchListProps, {}> {
                   {matchStat.getWinLost}
                 </Table.Cell>
                 <Table.Cell>
-                  {matchStat.gameDurationInMinutes}
+                  {matchStat.gameDurationInMinutesAsString}
                 </Table.Cell>
                 <Table.Cell>
-                  {matchStat.summonerSpells ? <div>{matchStat.summonerSpells.firstSummonerSpell}</div> : <div>'N/A'</div>}
-                  {matchStat.summonerSpells ? <div>{matchStat.summonerSpells.secondSummonerSpell}</div> : <div>'N/A'</div>}
+                  {matchStat.summonerSpells ? <div className="spacing-above">{matchStat.summonerSpells.firstSummonerSpell}</div> : <div>'N/A'</div>}
+                  {matchStat.summonerSpells ? <div className="spacing-above">{matchStat.summonerSpells.secondSummonerSpell}</div> : <div>'N/A'</div>}
                 </Table.Cell>
                 <Table.Cell>
                   {
                     matchStat.runes ?
                     matchStat.runes.map((rune, index) => (
-                      <div key = {index}>
+                      <div key = {index} className="spacing-above">
                         {rune}
                       </div>
                     ))
@@ -92,7 +91,7 @@ export class MatchListComponent extends React.Component<MatchListProps, {}> {
                   {
                     matchStat.items ?
                     matchStat.items.map((item, index) => (
-                      <div key = {index}>
+                      <div key = {index} className="spacing-above">
                         {item}
                       </div>
                     ))
@@ -118,7 +117,7 @@ export class MatchListComponent extends React.Component<MatchListProps, {}> {
                 </Table.Cell>
 
                 <Table.Cell>
-                  {matchStat.creepScorePerMinute}
+                  {matchStat.creepScorePerMinuteAsString}
                 </Table.Cell>
                 
               </Table.Row>

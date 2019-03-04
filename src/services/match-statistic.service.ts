@@ -173,9 +173,9 @@ export class MatchStatisticService {
   private async getMatchListsByAccountId(accountId: string, begin?: number, end?: number) {
     // https://developer.riotgames.com/api-methods/#match-v4/GET_getMatchlist
     const beginQueryParam = isNullOrUndefined(begin) || begin < 0 ? 0 : begin;
-    const endQueryParam = isNullOrUndefined(end) || end > 100 ? 100 : end;
+    const endQueryParam = isNullOrUndefined(end) || end > 25 ? 25 : end;
     let response =
-      await fetch(`https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${accountId}?api_key=${API_KEY}&beginIndex=${begin}&endIndex=${end}`);
+      await fetch(`https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/${accountId}?api_key=${API_KEY}&beginIndex=${beginQueryParam}&endIndex=${endQueryParam}`);
       return response.json();
   }
 
