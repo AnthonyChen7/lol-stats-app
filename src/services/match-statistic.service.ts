@@ -38,7 +38,6 @@ export class MatchStatisticService {
         const value = runesJson.data[runeId]['name'];
         this.runesMap.set(runeId, value);
       }
-      console.log(this.runesMap);
     }
   }
   // TODO should fix this

@@ -17,7 +17,7 @@ export class SummonerMatchStatistic {
     return this.totalMinionsKilled === undefined ? 0 : this.totalMinionsKilled / this.gameDurationInMinutes;
   }
 
-  getWinLost() {
+  get getWinLost() {
     if (this.isWin === true) {
       return WinLossEnum.WIN;
     }
