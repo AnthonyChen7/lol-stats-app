@@ -6,7 +6,7 @@ import { isNullOrUndefined } from 'util';
 // TODO might want to rename this in the future to something more general
 
 // TODO this is a terrible idea. should put API key somwhere else
-const API_KEY = 'RGAPI-c823e107-e4c1-4e63-be3d-45044eb2d3d5';
+const API_KEY = 'RGAPI-906d078f-28fd-4ddd-9046-cea5ce2d8dc8';
 
 const CHAMPIONS_DATA_URL = 'https://ddragon.leagueoflegends.com/cdn/8.14.1/data/en_US/champion.json';
 const ITEMS_DATA_URL = 'https://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/item.json';
