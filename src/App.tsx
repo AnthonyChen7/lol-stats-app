@@ -32,10 +32,11 @@ class App extends React.Component<{}, AppState> {
     // TODO do it like this for now
     this.matchStatsService.getMatchStatisticsForSummoner(searchVal)
     .then((result: SummonerMatchStatistic[]) => {
-      // this.searchResults = result;
       this.setState({searchResult: new SummonerMatches(searchVal, result)});
     })
-    .catch();
+    .catch(() => {
+      this.setState({searchResult: new SummonerMatches(searchVal, [])});
+    });
   }
   public render() {
     return (

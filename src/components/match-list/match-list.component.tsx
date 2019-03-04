@@ -129,7 +129,7 @@ export class MatchListComponent extends React.Component<MatchListProps, {}> {
     }
     else {
       return(
-        <div>No match histories found</div>
+        <div className="no-match-history">No match histories found</div>
       );
     }
   }

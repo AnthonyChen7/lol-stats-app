@@ -1,3 +1,7 @@
 .spacing-above {
   margin-top: 10px;
 }
+
+.no-match-history {
+  text-align: center;
+}

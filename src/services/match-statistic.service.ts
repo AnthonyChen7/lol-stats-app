@@ -8,10 +8,6 @@ import { isNullOrUndefined } from 'util';
 // TODO this is a terrible idea. should put API key somwhere else
 const API_KEY = 'RGAPI-c823e107-e4c1-4e63-be3d-45044eb2d3d5';
 
-// TODO remove this
-// const TEST_SUMMONER = 'flyinXhobo';
-
-
 const CHAMPIONS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/8.14.1/data/en_US/champion.json';
 const ITEMS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/item.json';
 const SUMMONER_SPELL_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/summoner.json';
@@ -76,91 +72,97 @@ export class MatchStatisticService {
   }
   // TODO refactor and clean this up
   async getMatchStatisticsForSummoner(summonerName: string, begin?: number, end?: number): Promise<SummonerMatchStatistic[]>  {
-    const summonerMatchStats : SummonerMatchStatistic[] = [];
-    let  responseJson = await this.getSummonerNameInfo(summonerName);
-
-    const summonerNameResponse = responseJson['name'];
-
-    const accountId = responseJson['accountId'];
-
-    responseJson = await this.getMatchListsByAccountId(accountId,begin ,end);
-
-    const matchIds = (responseJson['matches'] as any[]).map(element => element['gameId']);
-
-    if (matchIds) {
-      for (let i = 0 ; i < matchIds.length; i++) {
-        responseJson = await this.getMatchInfoByMatchId(matchIds[i]);
-        const summonerMatchStat = new SummonerMatchStatistic();
-        summonerMatchStat.id = matchIds[i];
-        summonerMatchStat.summonerName = summonerNameResponse;
-        summonerMatchStat.gameDurationInSeconds = responseJson['gameDuration'];
-
-        const participantIdentities = responseJson['participantIdentities'] as any[];
-        const participantIdentity = participantIdentities.find(element => 
-           (element.player && element.player.summonerName === summonerNameResponse));
-        if (participantIdentity) {
-          const participantId = participantIdentity.participantId;
-
-          const participants = responseJson['participants'] as any[];
-          for (const participant of participants) {
-            if (participant.participantId === participantId) {
-              // cast to string because api store it as an int
-              summonerMatchStat.champName = this.championMap.get('' +participant.championId);
-
-              summonerMatchStat.summonerSpells = {
+    try{
+      const summonerMatchStats : SummonerMatchStatistic[] = [];
+      let  responseJson = await this.getSummonerNameInfo(summonerName);
+  
+      const summonerNameResponse = responseJson['name'];
+  
+      const accountId = responseJson['accountId'];
+  
+      responseJson = await this.getMatchListsByAccountId(accountId,begin ,end);
+  
+      const matchIds = (responseJson['matches'] as any[]).map(element => element['gameId']);
+  
+      if (matchIds) {
+        for (let i = 0 ; i < matchIds.length; i++) {
+          responseJson = await this.getMatchInfoByMatchId(matchIds[i]);
+          const summonerMatchStat = new SummonerMatchStatistic();
+          summonerMatchStat.id = matchIds[i];
+          summonerMatchStat.summonerName = summonerNameResponse;
+          summonerMatchStat.gameDurationInSeconds = responseJson['gameDuration'];
+  
+          const participantIdentities = responseJson['participantIdentities'] as any[];
+          const participantIdentity = participantIdentities.find(element => 
+             (element.player && element.player.summonerName === summonerNameResponse));
+          if (participantIdentity) {
+            const participantId = participantIdentity.participantId;
+  
+            const participants = responseJson['participants'] as any[];
+            for (const participant of participants) {
+              if (participant.participantId === participantId) {
                 // cast to string because api store it as an int
-                firstSummonerSpell: this.summonerSpellsMap.get(''+participant.spell1Id),
-                secondSummonerSpell: this.summonerSpellsMap.get(''+participant.spell2Id)
-              };
-
-              if(participant.runes) {
-                summonerMatchStat.runes = [];
-                // cast to string because api store it as an int
-                for( const runeInfo of participant.runes) {
-                  if (this.runesMap.has('' + runeInfo.runeId)) {
-                    summonerMatchStat.runes.push(this.runesMap.get('' + runeInfo.runeId));
+                summonerMatchStat.champName = this.championMap.get('' +participant.championId);
+  
+                summonerMatchStat.summonerSpells = {
+                  // cast to string because api store it as an int
+                  firstSummonerSpell: this.summonerSpellsMap.get(''+participant.spell1Id),
+                  secondSummonerSpell: this.summonerSpellsMap.get(''+participant.spell2Id)
+                };
+  
+                if(participant.runes) {
+                  summonerMatchStat.runes = [];
+                  // cast to string because api store it as an int
+                  for( const runeInfo of participant.runes) {
+                    if (this.runesMap.has('' + runeInfo.runeId)) {
+                      summonerMatchStat.runes.push(this.runesMap.get('' + runeInfo.runeId));
+                    }
                   }
                 }
+  
+                const stats = participant.stats;
+                if (stats) {
+                  summonerMatchStat.isWin = stats.win;
+  
+                  // refactor into object?
+                  summonerMatchStat.numKills = stats.kills;
+                  summonerMatchStat.numDeaths = stats.deaths;
+                  summonerMatchStat.numAssists = stats.assists;
+  
+                  // TODO refactor this by creating possibly an interface for it
+                  summonerMatchStat.neutralMinionsKilled = stats.neutralMinionsKilled;
+                  summonerMatchStat.neutralMinionsKilledTeamJungle = stats.neutralMinionsKilledTeamJungle;
+                  summonerMatchStat.totalMinionsKilled = stats.totalMinionsKilled;
+                  summonerMatchStat.neutralMinionsKilledEnemyJungle = stats.neutralMinionsKilledEnemyJungle;
+                  
+                  summonerMatchStat.champLvl = stats.champLevel;
+  
+                  summonerMatchStat.items = [
+                    // cast to string because api store it as an int
+                    this.itemsMap.get(''+stats.item0),
+                    this.itemsMap.get(''+stats.item1),
+                    this.itemsMap.get(''+stats.item2),
+                    this.itemsMap.get(''+stats.item3),
+                    this.itemsMap.get(''+stats.item4),
+                    this.itemsMap.get(''+stats.item5),
+                    this.itemsMap.get(''+stats.item6),
+                  ];
+                  summonerMatchStats.push(summonerMatchStat);
+                }
+        
+                break;
               }
-
-              const stats = participant.stats;
-              if (stats) {
-                summonerMatchStat.isWin = stats.win;
-
-                // refactor into object?
-                summonerMatchStat.numKills = stats.kills;
-                summonerMatchStat.numDeaths = stats.deaths;
-                summonerMatchStat.numAssists = stats.assists;
-
-                // TODO refactor this by creating possibly an interface for it
-                summonerMatchStat.neutralMinionsKilled = stats.neutralMinionsKilled;
-                summonerMatchStat.neutralMinionsKilledTeamJungle = stats.neutralMinionsKilledTeamJungle;
-                summonerMatchStat.totalMinionsKilled = stats.totalMinionsKilled;
-                summonerMatchStat.neutralMinionsKilledEnemyJungle = stats.neutralMinionsKilledEnemyJungle;
-                
-                summonerMatchStat.champLvl = stats.champLevel;
-
-                summonerMatchStat.items = [
-                  // cast to string because api store it as an int
-                  this.itemsMap.get(''+stats.item0),
-                  this.itemsMap.get(''+stats.item1),
-                  this.itemsMap.get(''+stats.item2),
-                  this.itemsMap.get(''+stats.item3),
-                  this.itemsMap.get(''+stats.item4),
-                  this.itemsMap.get(''+stats.item5),
-                  this.itemsMap.get(''+stats.item6),
-                ];
-                summonerMatchStats.push(summonerMatchStat);
-              }
-      
-              break;
             }
           }
         }
       }
+  
+      return summonerMatchStats;
+    }
+    catch(error) {
+      throw Error('Error occured');
     }
 
-    return summonerMatchStats;
   }
 
   private async getSummonerNameInfo(summonerName: string) {
