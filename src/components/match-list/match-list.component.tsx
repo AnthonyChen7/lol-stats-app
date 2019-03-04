@@ -3,6 +3,7 @@ import './match-list.component.scss';
 import { Grid, Header, Table } from 'semantic-ui-react'
 import { SummonerMatches } from 'src/models/summoner-matches';
 import { WinLossEnum } from 'src/models/summoner-match-statistic';
+import { MatchStatisticService } from 'src/services/match-statistic.service';
 
 interface MatchListProps {
   matches: SummonerMatches | undefined;
@@ -52,7 +53,10 @@ export class MatchListComponent extends React.Component<MatchListProps, {}> {
 
           <Table.Body>
             {this.props.matches.matchStats.map((matchStat)=> (
-              <Table.Row key={matchStat.id}>
+              <Table.Row 
+                key={matchStat.id}
+                positive = {matchStat.isWin}
+                negative = {!matchStat.isWin}>
                 <Table.Cell>
                   {matchStat.getWinLost}
                 </Table.Cell>
