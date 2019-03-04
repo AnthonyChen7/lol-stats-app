@@ -8,10 +8,10 @@ import { isNullOrUndefined } from 'util';
 // TODO this is a terrible idea. should put API key somwhere else
 const API_KEY = 'RGAPI-c823e107-e4c1-4e63-be3d-45044eb2d3d5';
 
-const CHAMPIONS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/8.14.1/data/en_US/champion.json';
-const ITEMS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/item.json';
-const SUMMONER_SPELL_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/summoner.json';
-const RUNES_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/rune.json';
+const CHAMPIONS_DATA_URL = 'https://ddragon.leagueoflegends.com/cdn/8.14.1/data/en_US/champion.json';
+const ITEMS_DATA_URL = 'https://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/item.json';
+const SUMMONER_SPELL_DATA_URL = 'https://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/summoner.json';
+const RUNES_DATA_URL = 'https://ddragon.leagueoflegends.com/cdn/6.24.1/data/en_US/rune.json';
 
 export class MatchStatisticService {
   private championMap: Map<string, string>;
