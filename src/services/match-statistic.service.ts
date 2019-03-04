@@ -9,7 +9,7 @@ import { isNullOrUndefined } from 'util';
 const API_KEY = 'RGAPI-c823e107-e4c1-4e63-be3d-45044eb2d3d5';
 
 // TODO remove this
-const TEST_SUMMONER = 'flyinXhobo';
+// const TEST_SUMMONER = 'flyinXhobo';
 
 
 const CHAMPIONS_DATA_URL = 'http://ddragon.leagueoflegends.com/cdn/8.14.1/data/en_US/champion.json';
@@ -166,7 +166,7 @@ export class MatchStatisticService {
   private async getSummonerNameInfo(summonerName: string) {
     // https://developer.riotgames.com/api-methods/#summoner-v4/GET_getBySummonerName
     let response =
-      await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${TEST_SUMMONER}?api_key=${API_KEY}`);
+      await fetch(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${summonerName}?api_key=${API_KEY}`);
       return response.json();
   }
 
